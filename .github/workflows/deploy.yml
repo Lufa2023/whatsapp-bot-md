@@ -1,0 +1,64 @@
+name: Node.js CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20.x'  # Replace with the appropriate Node.js version
+
+    - name: Install dependencies
+      run: |
+        sudo apt -y update
+        sudo apt -y upgrade
+        sudo apt -y install git ffmpeg curl
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+        sudo apt-get install -y nodejs
+        sudo npm install -g yarn
+        sudo yarn global add pm2
+
+    - name: Clone repository and install packages
+      run: |
+        git clone https://github.com/lyfe00011/whatsapp-bot-md botName
+        cd botName
+        yarn install
+
+    - name: Configure environment variables
+      run: |
+        echo "younglufa44
+        PREFIX=.
+        STICKER_PACKNAME=LyFE
+        ALWAYS_ONLINE=false
+        RMBG_KEY=null
+        LANGUAG=en
+        WARN_LIMIT=3
+        FORCE_LOGOUT=false
+        BRAINSHOP=159501,6pq8dPiYt7PdqHz3
+        MAX_UPLOAD=200
+        REJECT_CALL=false
+        SUDO=94775688597
+        TZ=Asia/Kolkata
+        VPS=true
+        AUTO_STATUS_VIEW=true
+        SEND_READ=true
+        AJOIN=true
+        DISABLE_START_MESSAGE=false
+        PERSONAL_MESSAGE=null" > config.env
+
+    - name: Start bot with pm2
+      run: |
+        pm2 start . --name botName --attach --time
+
+    # Optional: Add more steps for testing, linting, etc.
+    
